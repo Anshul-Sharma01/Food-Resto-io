@@ -2,9 +2,10 @@
   "name": "server",
   "version": "1.0.0",
   "description": "A food-resto project inspired from zomato and swiggy",
-  "main": "index.js",
+  "main": "server.js",
+  "type": "module",
   "scripts": {
-    "start" : "nodemon index.js"
+    "start" : "nodemon server.js"
   },
   "keywords": [
     "restaurant",
