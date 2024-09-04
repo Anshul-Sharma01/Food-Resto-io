@@ -14,6 +14,15 @@ app.use(express.urlencoded({ extended : true }));
 app.use(morgan("dev"));
 
 
+// Router imports : 
+import userRouter from "./routes/user.routes.js";
+
+
+
+
+app.use("/api/v1/users", userRouter);
+
+
 
 app.get("/", (req, res) => {
     res.send("Server started");
