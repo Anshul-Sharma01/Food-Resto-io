@@ -5,7 +5,7 @@ import { User } from "../models/user.model.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import { deleteFromCloudinary, uploadOnCloudinary } from "../utils/cloudinary.js";
-import { executionAsyncResource } from "async_hooks";
+
 
 
 const cookieOptions = {
