@@ -26,6 +26,11 @@ const userSchema = new Schema({
         required : [true, "Phone number is required"],
         unique : [true, "Phone number already registered"],
     },
+    address : {
+        type : String,
+        required : [true, "Address is required"],
+        trim : true
+    },
     avatar : {
         public_id : {
             type : String,
