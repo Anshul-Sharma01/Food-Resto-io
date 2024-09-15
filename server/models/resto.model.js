@@ -103,3 +103,8 @@ const restoSchema = new Schema({
 }, {
     timestamps : true
 })
+
+export const Resto = mongoose.model("Resto", restoSchema);
+
+
+
