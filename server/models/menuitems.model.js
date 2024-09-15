@@ -39,24 +39,12 @@ const menuItemSchema = new Schema({
         ref : "Resto",
         required : [true, "The name os Restaurant is required"],
     },
-    ratings : [
+    reviews :[
         {
-            user : {
-                type : Schema.Types.ObjectId,
-                ref : "User"
-            },
-            rating : {
-                type : Number,
-                required : true,
-            },
-            review : {
-                type : String,
-                required : [true, 'Review is required for rating']
-            },
-            date : {
-                type : Date,
-                default : Date.now
-            }
+            
+            type : Schema.Types.ObjectId,
+            ref : "Review"
+            
         }
     ],
     numberOfRatings : {
