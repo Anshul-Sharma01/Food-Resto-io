@@ -33,13 +33,27 @@ export const verifyAdmin = asyncHandler(async(req, res, next) => {
     try{
         const { user } = req;
 
-        if(!user || user.role !== 'admin'){
+        if(!user || user.role !== 'ADMIN'){
             throw new ApiError(403, "Access Forbidden");
         }
         next();
 
     }catch(err){
         throw new ApiError(403, err?.message || "Access to this particular route is forbidden");
+    }
+})
+
+export const verifyOwner = asyncHandler(async (req, res, next) => {
+    try{
+        const { user } = req;
+
+        if(!user || user.role !== 'RESTAURANT_OWNER'){
+            throw new ApiError(403, "Access Forbidden");
+        }
+        next();
+
+    }catch(err){
+        throw new ApiError(403, err?.message || "Access to the particular route is forbidden");
     }
 })
 
