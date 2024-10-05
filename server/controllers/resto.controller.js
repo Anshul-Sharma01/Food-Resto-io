@@ -231,15 +231,80 @@ const updateRestoLogo = asyncHandler(async(req, res, next) => {
     }
 })
 
-const deleteResto = asyncHandler(async(req, res, next) => {
-
-})
 
 const getRestosByCategory = asyncHandler(async(req, res, next) => {
+    try{
+        const { category } = req.params;
 
+        if(!category){
+            throw new ApiError(400, "Please provide the category first");
+        }
+
+        const restos = await Resto.find({ categories : { $in : [category] } });
+
+        if(restos.length === 0){
+            return res.status(404)
+            .json(
+                new ApiResponse(
+                    404,
+                    restos,
+                    "No restaurants found"
+                )
+            )
+        }
+
+        return res.status(200)
+        .json(
+            new ApiResponse(
+                200,
+                restos,
+                "Restaurants fetched successfully"
+            )
+        )
+
+    }catch(err){
+        console.error(`Error occurred while fetching restos by category : ${err}`);
+        throw new ApiError(400, "Error occurred while fetching restaurants by category");
+    }
 })
 
 const getRestosByLocation = asyncHandler(async(req, res, next) => {
+    try{
+        const { city } = req.params;
+
+        if(!city){
+            throw new ApiError(400, "Please provide a city name !!");
+        }
+
+        const restos = await Resto.find({ "location.city" : city });
+
+        if(restos.length == 0){
+            return res.status(404)
+            .json(
+                new ApiResponse(
+                    404,
+                    restos,
+                    "No restaurants found in this city"
+                )
+            )
+        }
+
+        return res.status(200)
+        .json(
+            new ApiResponse(
+                200,
+                restos,
+                "Restaurants fetched successfully"
+            )
+        )
+
+    }catch(err){
+        console.error(`Error occurred while fetching restos by location : ${err}`);
+        throw new ApiError(400, err?.message || "Error occurred while fetching Restaurants by Location");
+    }
+})
+
+const deleteResto = asyncHandler(async(req, res, next) => {
 
 })
 

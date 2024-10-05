@@ -20,7 +20,7 @@ router.route("/restaurants/:id")
 router.route("/restaurants/category/:category")
 .get(getRestosByCategory);
 
-router.route("/restaurants/location/:location")
+router.route("/restaurants/location/:city")
 .get(getRestosByLocation);
 
 router.route("/update-details/:restoId")
@@ -28,6 +28,7 @@ router.route("/update-details/:restoId")
 
 router.route("/update-logo/:restoId")
 .patch(updateRestoLogo);
+
 
 
 
