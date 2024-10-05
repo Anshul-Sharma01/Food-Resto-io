@@ -2,7 +2,7 @@ import { Schema } from "mongoose";
 
 
 const restoSchema = new Schema({
-    RestoName : {
+    restoName : {
         type : String,
         required : [true ,'Restaurant Name is required'],
         trim : true
@@ -16,7 +16,7 @@ const restoSchema = new Schema({
         type : String,
         required : [true, "Restaurant Email is required"]
     },
-    RestoContact : {
+    restoContact : {
         type : String,
         required : [true, "Restaurant contact number is required"],
         unique : [true , 'Restaurant Contact number must be unique'],
