@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createResto, deleteResto, getAllRestos, getRestoById, getRestosByCategory, getRestosByLocation, restoreInActiveRestos, softDeleteResto, updateRestoDetails, updateRestoLogo } from "../controllers/resto.controller.js";
+import { createResto, deleteResto, getAllRestos, getOpenRestos, getRestoById, getRestosByCategory, getRestosByLocation, getTopRatedRestos, restoreInActiveRestos, searchRestos, softDeleteResto, updateRestoDetails, updateRestoLogo } from "../controllers/resto.controller.js";
 import { verifyAdmin, verifyJWT, verifyOwner } from "../middlewares/auth.middleware.js";
 
 
@@ -30,8 +30,14 @@ router.route("/update-logo/:restoId")
 .patch(updateRestoLogo);
 
 
+router.route("/get-open-restos")
+.get(getOpenRestos);
 
+router.route("/search")
+.get(searchRestos);
 
+router.route("/top-rated")
+.get(getTopRatedRestos);
 
 router.route("/soft-delete/:restoId")
 .get(softDeleteResto);

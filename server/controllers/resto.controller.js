@@ -231,6 +231,73 @@ const updateRestoLogo = asyncHandler(async(req, res, next) => {
     }
 })
 
+const getOpenRestos = asyncHandler(async(req, res, next) => {
+    try{
+        const restos = await Resto.find({ status : open });
+        if(restos.length == 0){
+            return res.status(200)
+            .json(
+                new ApiResponse(
+                    200,
+                    restos,
+                    "No restauranted are opened yet !!"
+                )
+            )
+        }
+        return res.status(200)
+        .json(
+            200,
+            restos,
+            "Open Restaurants are fetched successfully"
+        )
+    }catch(err){
+        console.error(`Error occurred while fetching active restaurants : ${err}`);
+        throw new ApiError(400, "Error occurred while fetching active restaurants");
+    }
+})
+
+const getTopRatedRestos = asyncHandler(async(req, res, next) => {
+    try{
+        const topRestos = await Resto.find({}).sort({ rating : -1 }).limit(10);
+        return res.status(200)
+        .json(
+            new ApiResponse(
+                200,
+                topRestos,
+                "Top Rated Restaurants fetched successfully"
+            )
+        )
+    }catch(err){
+        console.error(`Error occurred while fetching Top Rated Restaurants : ${err}`);
+        throw new ApiError(400, "Error occurred while fetching Top Rated Restaurants");
+    }
+})
+
+const searchRestos = asyncHandler(async(req, res, next) => {
+    try{
+        const { query } = req.query;
+        const restos = await Resto.find({
+            $or : [
+                { restoName : { $regex : query, $options : "i"}},
+                { categories : {$regex : query, $options : "i"}},
+            ],
+        })
+
+        return res.status(200)
+        .json(
+            new ApiResponse(
+                200,
+                restos,
+                "Restaurants fetched successfully"
+            )
+        )
+
+    }catch(err){
+        console.error(`Error occurred while searching for restaurants: ${err}`);
+        throw new ApiError(400, "Error occurred while searching for restaurants.");
+    }
+})
+
 
 const getRestosByCategory = asyncHandler(async(req, res, next) => {
     try{
@@ -411,11 +478,14 @@ const restoreInActiveRestos = asyncHandler(async(req, res, next) => {
 
 export {
     createResto,
+    searchRestos,
     getAllRestos,
     getRestoById,
+    getOpenRestos,
     updateRestoDetails,
     updateRestoLogo,
     softDeleteResto,
+    getTopRatedRestos,
     restoreInActiveRestos,
     deleteRestoPermanently,
     getRestosByCategory,
