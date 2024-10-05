@@ -304,10 +304,110 @@ const getRestosByLocation = asyncHandler(async(req, res, next) => {
     }
 })
 
-const deleteResto = asyncHandler(async(req, res, next) => {
+const softDeleteResto = asyncHandler(async(req, res, next) => {
+    try{
+        const { restoId } = req.params;
+        const userId = req.user._id;
 
+        if(!isValidObjectId(restoId)){
+            throw new ApiError(400, 'Invalid Resto Id');
+        }
+
+        const resto = await Resto.findById(restoId);
+        if(!resto){
+            throw new ApiError(404, "Resto does not exists");
+        }
+
+        if(resto.owner.toString() !== userId){
+            throw new ApiError(400, "You are not authorized to close this restaurant");
+        }
+
+        resto.status = "softDeleteResto";
+        await resto.save();
+
+        return res.status(200)
+        .json(
+            new ApiResponse(
+                200,
+                resto,
+                "Restaurant status updated to In-Active"
+            )
+        )
+
+    }catch(err){
+        console.error(`Error occurred while closing the restaurant : ${err}`);
+        throw new ApiError(400, "Error occurred while closing the Restaurant");
+    }
 })
 
+const deleteRestoPermanently = asyncHandler(async(req, res, next) => {
+    try{
+        const { restoId } = req.params;
+        const userId = req.user._id;
+
+        if(!isValidObjectId(restoId)){
+            throw new ApiError(400, 'Invalid Resto Id');
+        }
+
+        const resto = await Resto.findById(restoId);
+        if(!resto){
+            throw new ApiError(404, "Resto does not exists");
+        }
+
+        if(resto.owner.toString() !== userId){
+            throw new ApiError(400, "You are not authorized to delete this restaurant");
+        }
+
+        await resto.deleteOne();
+
+        return res.status(200)
+        .json(
+            new ApiResponse(
+                200,
+                resto,
+                "Restaurant Deleted Successfully"
+            )
+        )
+
+    }catch(err){
+        console.error(`Error occurred while deleting the restaurant : ${err}`);
+        throw new ApiError(400, "Error occurred while deleting the Restaurant");
+    }
+})
+
+const restoreInActiveRestos = asyncHandler(async(req, res, next) => {
+    try{
+        const { restoId } = req.params;
+        if(!isValidObjectId(restoId)){
+            throw new ApiError(400, "Invalid Restaurant Id");
+        }
+
+        const resto = await Resto.findById(restoId);
+        if(!resto){
+            throw new ApiError(404, "Restaurant does not exists..");
+        }
+
+        if(resto.owner.toString() !== req.user._id){
+            throw new ApiError(400, "You are not authorized to update the status of this Restaurant");
+        }
+
+        resto.status = "opne";
+        await resto.save();
+
+        return res.status(200)
+        .json(
+            new ApiResponse(
+                200,
+                resto,
+                "Restaurant Status Successfully Restored"
+            )
+        );
+
+    }catch(err){
+        console.error(`Error occurred while restoring in-active restos : ${err}`);
+        throw new ApiError(400, "Restaurant Status Successfully restored !!");
+    }
+})
 
 export {
     createResto,
@@ -315,7 +415,9 @@ export {
     getRestoById,
     updateRestoDetails,
     updateRestoLogo,
-    deleteResto,
+    softDeleteResto,
+    restoreInActiveRestos,
+    deleteRestoPermanently,
     getRestosByCategory,
     getRestosByLocation
 }

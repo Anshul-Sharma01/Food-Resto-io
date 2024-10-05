@@ -90,7 +90,7 @@ const restoSchema = new Schema({
     status : {
         type : String,
         required : [true, "Restaurant current status is required"],
-        enum : ["open", "closed"]
+        enum : ["open", "closed", "inActive"]
     },
     reviews : [
         {

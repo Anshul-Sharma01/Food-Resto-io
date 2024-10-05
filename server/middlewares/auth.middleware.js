@@ -48,7 +48,7 @@ export const verifyOwner = asyncHandler(async (req, res, next) => {
         const { user } = req;
 
         if(!user || user.role !== 'RESTAURANT_OWNER'){
-            throw new ApiError(403, "Access Forbidden");
+            throw new ApiError(403, "Access Fobridden");
         }
         next();
 
