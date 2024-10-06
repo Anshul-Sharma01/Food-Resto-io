@@ -1,4 +1,4 @@
-import { Schema } from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
 
 const menuItemSchema = new Schema({
@@ -39,7 +39,7 @@ const menuItemSchema = new Schema({
         ref : "Resto",
         required : [true, "The name of Restaurant is required"],
     },
-    reviews :[
+    reviews : [
         {
             
             type : Schema.Types.ObjectId,
