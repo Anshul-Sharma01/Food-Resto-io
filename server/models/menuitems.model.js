@@ -37,7 +37,7 @@ const menuItemSchema = new Schema({
     resto : {
         type : Schema.Types.ObjectId,
         ref : "Resto",
-        required : [true, "The name os Restaurant is required"],
+        required : [true, "The name of Restaurant is required"],
     },
     reviews :[
         {
