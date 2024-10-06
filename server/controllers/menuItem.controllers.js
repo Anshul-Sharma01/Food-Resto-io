@@ -113,9 +113,112 @@ const removeMenuItem = asyncHandler(async (req, res, next) => {
 
 const updateMenuItem = asyncHandler(async(req, res, next) => {
     try{
+        const { itemId } = req.params;
+        const { name, description, price, category } = req.body;
+        if(!name && !description && !price && !category){
+            throw new ApiError(400, "At Least one field is required");
+        }
+        
+        if(!isValidObjectId(itemId)){
+            throw new ApiError(400, 'Invalid Menu Item Id');
+        }
+
+        const item = await MenuItem.findById(itemId);
+        if(!item){
+            throw new ApiError(404, "Menu Item does not exists !!");
+        }
+
+        if(name) item.name = name;
+        if(description) item.description = description;
+        if(price && !isNaN(price)) item.price = price;
+        if(category) item.category = category;
+        
+        await item.save();
+        return res.status(200)
+        .json(
+            new ApiResponse(
+                200,
+                item,
+                "Menu Item updated successfully"
+            )
+        )
+        
+    }catch(err){
+        console.error(`Error occurred while updating the menuItem : ${err}`);
+        throw new ApiError(400, err?.message || "Error occcurred while updating the menuItem");
+    }
+})
+
+const updateMenuItemLogo = asyncHandler(async(req, res, next) => {
+    try{
+        const { itemId } = req.params;
+        if(!isValidObjectId(itemId)){
+            throw new ApiError(400, "Invalid Menu Item Id");
+        }
+
+        const item = await MenuItem.findById(itemId);
+        if(!item){
+            throw new ApiError(404, "Menu Item does not exists !!");
+        }
+
+        if(req.file){
+            const logoImageLocalPath = req.file?.path;
+            const logoImage = await uploadOnCloudinary(logoImageLocalPath);
+            if(!logoImage){
+                throw new ApiError(400, "Logo Image corrupted, please try again later..");
+            }
+
+            item.image.public_id = logoImage.public_id;
+            item.image.secure_url = logoImage.secure_url;
+
+            await item.save();
+
+            return res.status(200)
+            .json(
+                new ApiResponse(
+                    200,
+                    item,
+                    "Menu Item Logo updated successfully"
+                )
+            )
+
+        }else{
+            throw new ApiError(400, "Logo Image is required !!");
+        }
 
     }catch(err){
+        console.error(`Error occurred while updating the menu item logo : ${err}`);
+        throw new ApiError(400, err?.message || "Error occurred while updating the menu item logo");
+    }
+})
 
+const toggleItemAvailability = asyncHandler(async(req, res, next) => {
+    try{
+        const { itemId } = req.params;
+        if(!isValidObjectId(itemId)){
+            throw new ApiError(400, "Invalid Menu Item Id");
+        }
+
+        const item = await MenuItem.findById(itemId);
+        if(!item){
+            throw new ApiError(404, "Menu Item does not exists !!");
+        }
+
+        item.isAvailable = !item.isAvailable;
+
+        await item.save();
+        return res.status(200)
+        .json(
+            new ApiResponse(
+                200,
+                item,
+                "Menu Item availability updated successfully"
+            )
+        )
+
+    }catch(err){
+        console.error(`Error occurred while toggling the item availability  : ${err}`);
+        throw new ApiError(400, err?.message || "Error occurred while updating the item availability");
     }
 })
 
@@ -178,6 +281,7 @@ export {
     removeMenuItem,
     updateMenuItem,
     fetchAllMenuItems,
-    fetchMenuItem
-
+    fetchMenuItem,
+    updateMenuItemLogo,
+    toggleItemAvailability
 }
