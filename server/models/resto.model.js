@@ -69,7 +69,7 @@ const restoSchema = new Schema({
     },
     operatingHours : {
         openingTime : {
-            type : Date,
+            type : String,
             required : [true, "Opening time is required"],
         },
         closingTime : {

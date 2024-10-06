@@ -121,17 +121,54 @@ const updateMenuItem = asyncHandler(async(req, res, next) => {
 
 const fetchMenuItem = asyncHandler(async(req, res, next) => {
     try{
+        const { itemId } = req.params;
+        if(!isValidObjectId(itemId)){
+            throw new ApiError(400, "Invalid Menu Item Id");
+        }
 
+        const item = await MenuItem.findById(itemId);
+        if(!item){
+            throw new ApiError(404, "Menu Item does not exists");
+        }
+
+        return res.status(200)
+        .json(
+            new ApiResponse(
+                200,
+                item,
+                "Menu Item fetched successfully"
+            )
+        )
+        
     }catch(err){
-
+        console.error(`Error occurred while fetching a menu item : ${err}`);
+        throw new ApiError(400, err?.message ||  "Error occurred while fetching a menu item");
     }
 })
 
 const fetchAllMenuItems = asyncHandler(async(req, res, next) => {
     try{
+        const { restoId } = req.params;
+        if(!isValidObjectId(restoId)){
+            throw new ApiError(400, "Invalid Restaurant Id");
+        }
+
+        const resto = await Resto.findById(restoId).select("menuItems");
+        if(!resto){
+            throw new ApiError(404, "Restaurant does not exists !!");
+        }
+
+        return res.status(200)
+        .json(
+            new ApiResponse(
+                200,
+                resto,
+                "Restaurant Menu Items fetched Successfully"
+            )
+        )
 
     }catch(err){
-
+        console.error(`Error occurred while fetching all uu`)
     }
 })
 
