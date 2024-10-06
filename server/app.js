@@ -16,12 +16,14 @@ app.use(morgan("dev"));
 
 // Router imports : 
 import userRouter from "./routes/user.routes.js";
-
+import restoRouter from "./routes/resto.routes.js";
+import menuItemsRouter from "./routes/menuItems.routes.js";
 
 
 
 app.use("/api/v1/users", userRouter);
-
+app.use("/api/v1/resto", restoRouter);
+app.use("/api/v1/resto-menu", menuItemsRouter);
 
 
 app.get("/", (req, res) => {

@@ -275,6 +275,91 @@ const fetchAllMenuItems = asyncHandler(async(req, res, next) => {
     }
 })
 
+const fetchAvailableItems = asyncHandler(async(req, res, next) => {
+    try{
+        const { restoId } = req.params;
+        if(!isValidObjectId(restoId)){
+            throw new ApiError(400, "Invalid Restaurant Id");
+        }
+
+        const availableItems = await MenuItem.find({
+            resto : restoId,
+            isAvailable : true
+        });
+
+        if(!availableItems){
+            throw new ApiError(404, "No available items found");
+        }
+
+        return res.status(200)
+        .json(
+            new ApiResponse(
+                200,
+                availableItems,
+                "Available Menu Items fetched Successfully"
+            )
+        );
+
+
+    }catch(err){
+        console.error(`Error occurred while fetching all available menu items : ${err}`);
+        throw new ApiError(400, err?.message || "Error occurred while fetching available menu items");
+    }
+})
+
+const fetchItemCategories = asyncHandler(async(req, res, next) => {
+    try{
+        const { restoId } = req.params;
+        if(!isValidObjectId(restoId)){
+            throw new ApiError(400, "Invalid Restaurant Id");
+        }
+
+        const categories = await MenuItem.distinct("category", {resto : restoId});
+        
+        return res.status(200)
+        .json(
+            new ApiResponse(
+                200,
+                categories,
+                "Menu Item categories fetched Successfully"
+            )
+        );
+
+    }catch(err){
+        console.error(`Error occurred while fetching items categories : ${err}`);
+        throw new ApiError(400, err?.message || "Error occurred while fetching item categories");
+    }
+})
+
+const searchMenuItems = asyncHandler(async(req, res, next) => {
+    try{
+        const { query } = req.params;
+        if(!query){
+            throw new ApiError(400, "Search Query is required !!");
+        }
+
+        const menuItems = await MenuItem.find({
+            $or : [
+                { name : {$regex : query, $options : "i"}},
+                {category : {$regex : query, $options : "i"}}
+            ]
+        });
+
+        return res.status(200)
+        .json(
+            new ApiResponse(
+                200,
+                menuItems,
+                "Search results fetched successfully"
+            )
+        )
+
+    }catch(err){
+        console.error(`Error occurred while searching for menu items : ${err}`);
+        throw new ApiError(400, err.message || "Error occurred while searching for menu items");
+    }
+})
+
 
 export {
     addMenuItem,
@@ -283,5 +368,8 @@ export {
     fetchAllMenuItems,
     fetchMenuItem,
     updateMenuItemLogo,
-    toggleItemAvailability
+    toggleItemAvailability,
+    fetchAvailableItems,
+    fetchItemCategories,
+    searchMenuItems
 }

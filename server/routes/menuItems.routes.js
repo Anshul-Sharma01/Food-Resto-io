@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addMenuItem, fetchAllMenuItems, fetchMenuItem, removeMenuItem, toggleItemAvailability, updateMenuItem, updateMenuItemLogo } from "../controllers/menuItem.controllers";
+import { addMenuItem, fetchAllMenuItems, fetchAvailableItems, fetchItemCategories, fetchMenuItem, removeMenuItem, searchMenuItems, toggleItemAvailability, updateMenuItem, updateMenuItemLogo } from "../controllers/menuItem.controllers";
 import { upload } from "../middlewares/multer.middleware.js";
 
 const router = Router();
@@ -27,6 +27,13 @@ router.route("/menu-items/:restoId")
 router.route("/menu-item/toggle/:itemId")
 .get(toggleItemAvailability);
 
+router.route("/items-available/:restoId")
+.get(fetchAvailableItems);
 
+router.route("/categories/:restoId")
+.get(fetchItemCategories);
+
+router.route("/search")
+.get(searchMenuItems);
 
 export default router;
