@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { addMenuItem, fetchAllMenuItems, fetchAvailableItems, fetchItemCategories, fetchMenuItem, removeMenuItem, searchMenuItems, toggleItemAvailability, updateMenuItem, updateMenuItemLogo } from "../controllers/menuItem.controllers";
+import { addMenuItem, fetchAllMenuItems, fetchAvailableItems, fetchItemCategories, fetchMenuItem, removeMenuItem, searchMenuItems, sortAndFilterMenuItem, toggleItemAvailability, updateMenuItem, updateMenuItemLogo } from "../controllers/menuItem.controllers";
 import { upload } from "../middlewares/multer.middleware.js";
 
 const router = Router();
@@ -35,5 +35,8 @@ router.route("/categories/:restoId")
 
 router.route("/search")
 .get(searchMenuItems);
+
+router.route("/sort-filter/:restoId")
+.get(sortAndFilterMenuItem);
 
 export default router;

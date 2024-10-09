@@ -69,7 +69,6 @@ const addMenuItem = asyncHandler(async (req, res, next) => {
     }
 });
 
-
 const removeMenuItem = asyncHandler(async (req, res, next) => {
     try {
         const { restoId, itemId } = req.params;
@@ -360,6 +359,71 @@ const searchMenuItems = asyncHandler(async(req, res, next) => {
     }
 })
 
+const sortAndFilterMenuItem = asyncHandler(async(req, res,next) => {
+    try{
+        const  { restoId } = req.params;
+        const { sortBy, category, minPrice, maxPrice } = req.query;
+        if(!isValidObjectId(restoId)){
+            throw new ApiError(400, "Invalid Restaurant ID");
+        }
+
+        let filter = { resto : restoId };
+
+        if(category){
+            filter.category = category;
+        }
+
+        if(minPrice || maxPrice){
+            filter.price = {};
+            if(minPrice) filter.price.$gte = minPrice;
+            if(maxPrice) filter.price.$lte = maxPrice;
+        }
+
+        let sortOption = {};
+        switch(sortBy){
+            case 'price' :
+                sortOption.price = 1;
+                break;
+            case 'price_desc' :
+                sortOption.price = -1;
+                break;
+            case 'rating' :
+                sortOption.numberOfRatings = -1;
+                break;
+            case 'popularity' : 
+                sortOption.numberOfRatings = -1;
+                break;
+            default : 
+                sortOption.createdAt = -1;
+        }
+
+        const items = await MenuItem.find(filter).sort(sortOption);
+        if(items.length == 0){
+            return res.status(404)
+            .json(
+                new ApiResponse(
+                    404,
+                    items,
+                    "No items found matching the criteria"
+                )
+            );
+        }
+
+        return res.status(200)
+        .json(
+            new ApiResponse(
+                200,
+                items,
+                "Menu Items sorted and filtered successfully"
+            )
+        );
+
+    }catch(err){
+        console.error(`Error occurred while sorting and filtering menu items : ${err}`);
+        throw new ApiError(400, err?.message || "Error occurred while sorting and filtering the menu items !!");
+    }
+})
+
 
 export {
     addMenuItem,
@@ -371,5 +435,6 @@ export {
     toggleItemAvailability,
     fetchAvailableItems,
     fetchItemCategories,
-    searchMenuItems
+    searchMenuItems,
+    sortAndFilterMenuItem
 }
