@@ -131,7 +131,8 @@ const deleteReview = asyncHandler(async(req, res, next) => {
         if(review.resto){
             await Resto.findByIdAndUpdate(review.resto, { rating : avgRating });
         }else{
-            await MenuItem.findByIdAndUpdate(review.resto, {rating : avgRating});
+            await MenuItem.findByIdAndUpdate(review.menuItem, { rating: avgRating });
+
         }
 
         return res.status(200)
@@ -150,16 +151,82 @@ const deleteReview = asyncHandler(async(req, res, next) => {
 })
 
 const fetchReviewsForResto = asyncHandler(async(req, res, next) => {
+    try{
+        const { restoId } = req.params;
+        if(!isValidObjectId(restoId)){
+            throw new ApiError(400, "Invalid Restaurant Id");
+        }
 
+        const reviews = await Review.find({ resto : restoId });
+
+
+        return res.status(200)
+        .json(
+            new ApiResponse(
+                200,
+                reviews,
+                "Reviews fetched Successfully"
+            )
+        )
+
+    }catch(err){
+        console.error(`Error occurred while fetching reviews for restaurant : ${err}`);
+        throw new ApiError(400, err?.message || "Error occurred while fetching reviews for restaurant !!");
+    }
 })
 
 
 const fetchReviewForItem = asyncHandler(async(req, res, next) => {
+    try{
+        const { itemId } = req.params;
 
+        if(!isValidObjectId(itemId)){
+            throw new ApiError(400, "Invalid Menu-Item Id");
+        }
+
+        const reviews = await Review.find({ menuItem : itemId })
+        .populate("user", "name");
+
+        if(!reviews || reviews.length == 0){
+            throw new ApiError(404, "No reviews found for this menu item!!");
+        }
+
+        return res.status(200)
+        .json(
+            new ApiResponse(
+                200,
+                reviews,
+                "Reviews fetched successfully"
+            )
+        );
+
+    }catch(err){
+        console.error(`Error occurred while fetching reviews for menuItems : ${err}`);
+        throw new ApiError(400, err?.message || "Error occurred while fetching a review for menuItem");
+    }
 })
 
 const fetchAllUserReviews = asyncHandler(async(req, res, next) => {
+    try{
+        const userId = req.user._id;
+        
+        const reviews = await Review.find({ user : userId })
+        .populate("resto", "name")
+        .populate("menuItem", "name");
 
+        return res.status(200)
+        .json(
+            new ApiResponse(
+                200,
+                reviews,
+                "User Reviews fetched successfully !!"
+            )
+        )
+
+    }catch(err){
+        console.error(`Error occurred while fetching all user reviews : ${err}`);
+        throw new ApiError(400, err?.message || "Error occurred while fetching all user reviews !!");
+    }
 })
 
 
