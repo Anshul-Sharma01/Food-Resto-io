@@ -6,10 +6,13 @@ const reviewSchema = new Schema({
         ref : 'User',
         required : true
     },
+    resto : {
+        type : Schema.Types.ObjectId,
+        ref : "Review",
+    },
     menuItem : {
         type : Schema.Types.ObjectId,
         ref : 'MenuItem',
-        required : true
     },
     rating : {
         type : Number,
@@ -17,7 +20,7 @@ const reviewSchema = new Schema({
         min : [1, "Rating must be at least 1"],
         max : [5, "Rating can be at most 5"]
     },
-    review : {
+    reviewContent : {
         type : String,
         required : true,
         maxLength : 500
