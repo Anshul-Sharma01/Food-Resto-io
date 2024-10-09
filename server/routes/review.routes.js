@@ -10,7 +10,7 @@ router.route("/create")
 router.route("/update/:reviewId")
 .patch(editPrevReview);
 
-router.route("/delete/:deleteId")
+router.route("/delete/:reviewId")
 .delete(deleteReview);
 
 router.route("/fetch/:restoId")

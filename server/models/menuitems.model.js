@@ -39,6 +39,10 @@ const menuItemSchema = new Schema({
         ref : "Resto",
         required : [true, "The name of Restaurant is required"],
     },
+    rating : {
+        type : Number,
+        default : 0
+    },
     reviews : [
         {
             
